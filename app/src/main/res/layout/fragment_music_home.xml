@@ -11,7 +11,8 @@
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
-
+        app:iconifiedByDefault="false"
+        android:focusableInTouchMode="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -19,7 +20,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/search_view_bg"
-        app:queryHint="Search here..." />
+        app:queryHint="Search here..."
+        android:focusable="true" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/musicRV"

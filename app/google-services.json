@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "354248854449",
+    "project_id": "music-player-1fcf5",
+    "storage_bucket": "music-player-1fcf5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354248854449:android:5c8f5d11010ef6618e8b90",
+        "android_client_info": {
+          "package_name": "com.example.online_music"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354248854449-5s8v115d40vdo3fm1plj2oe38s4shm2u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.online_music",
+            "certificate_hash": "dfcce101f2b56789ed63c95ee17dfb51cc425194"
+          }
+        },
+        {
+          "client_id": "354248854449-74rqku4v0dfm8bhiqvnosu6vm1qqip7u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCb-HRfCAr1e274JwL-53RunAlGvhYFNnc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354248854449-74rqku4v0dfm8bhiqvnosu6vm1qqip7u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

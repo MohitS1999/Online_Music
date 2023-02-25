@@ -7,7 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Music player. -->
     <color name="icon_color">#296E85</color>
     <color name="text_color">#67B7D1</color>
     <color name="search_bg_color">#ADD8E6</color>
+    <color name="time_color_rv">#494E65</color>
 </resources>
