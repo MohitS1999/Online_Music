@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/musicHome">
+
+    <fragment
+        android:id="@+id/musicHome"
+        android:name="com.example.online_music.ui.MusicHome"
+        android:label="fragment_music_home"
+        tools:layout="@layout/fragment_music_home" />
+</navigation>
