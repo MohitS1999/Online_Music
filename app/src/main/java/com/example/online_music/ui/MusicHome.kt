@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +42,18 @@ class MusicHome : Fragment() {
 
         observeSongs()
 
+        binding.searchView.clearFocus()
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                musicAdapter.filter.filter(newText.toString())
+                return false
+            }
+
+        })
         binding.shuffleBtn.setOnClickListener {
             findNavController().navigate(R.id.action_musicHome_to_musicPlayer,Bundle().apply {  })
         }
