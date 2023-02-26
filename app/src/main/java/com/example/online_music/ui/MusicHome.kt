@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.online_music.R
 import com.example.online_music.adapter.MusicAdapter
@@ -17,6 +18,7 @@ import com.example.online_music.databinding.FragmentMusicHomeBinding
 import com.example.online_music.model.MusicData
 import com.example.online_music.util.UiState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_music_home.*
 
 private const val TAG = "MusicHome"
 @AndroidEntryPoint
@@ -79,6 +81,7 @@ class MusicHome : Fragment() {
     private fun updateRecyclerView() {
         Log.d(TAG, "updateRecyclerView: ${musicList.size}")
         binding.musicRV.setHasFixedSize(true)
+        binding.musicRV.addItemDecoration(DividerItemDecoration(musicRV.context,DividerItemDecoration.VERTICAL))
         binding.musicRV.setItemViewCacheSize(20)
         binding.musicRV.layoutManager = LinearLayoutManager(context)
         musicAdapter = MusicAdapter(requireActivity(),musicList,::onSongClicked)

@@ -39,8 +39,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:elevation="@dimen/_25sdp"
-
             android:text="00:00"
+            android:textSize="@dimen/_10sdp"
             android:layout_alignParentBottom="true"
             android:background="@color/time_color_rv"
             android:textStyle="bold"
