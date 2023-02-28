@@ -168,8 +168,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/previous_music_icon"
-                android:background="@android:color/transparent"
                 android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 app:tint="@color/icon_color" />
 
@@ -178,20 +178,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/play_music_icon"
-                android:background="@android:color/transparent"
                 android:focusable="true"
                 android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"
                 app:tint="@color/icon_color" />
+            <ProgressBar
+                android:id="@+id/playProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/play_music_icon"
+                android:backgroundTint="@color/icon_color"
+                android:visibility="gone"/>
 
             <ImageButton
                 android:id="@+id/nextMusicBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/next_music_icon"
-                android:background="@android:color/transparent"
                 android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 app:tint="@color/icon_color" />
+
 
         </LinearLayout>
 

@@ -1,13 +1,19 @@
 package com.example.online_music.ui
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.getSystemService
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -42,6 +48,7 @@ class MusicHome : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         musicList = ArrayList()
 
+
         observeSongs()
 
         binding.searchView.clearFocus()
@@ -57,12 +64,19 @@ class MusicHome : Fragment() {
 
         })
         binding.shuffleBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_musicHome_to_musicPlayer,Bundle().apply {  })
+            val bundle = Bundle()
+            bundle.putString("onShuffleClicked","songs")
+            bundle.putSerializable("musicList",musicList as java.io.Serializable)
+            findNavController().navigate(R.id.action_musicHome_to_musicPlayer,bundle)
         }
         binding.favoriteBtn.setOnClickListener {
             findNavController().navigate(R.id.action_musicHome_to_favoriteFragment,Bundle().apply {  })
         }
     }
+
+
+
+
 
     private fun observeSongs() {
         viewModel.getSongs.observe(viewLifecycleOwner){
@@ -92,6 +106,7 @@ class MusicHome : Fragment() {
         val bundle = Bundle()
         Log.d(TAG, "onSongClicked list: $list")
         Log.d(TAG, "onSongClicked: $pos")
+        bundle.putString("onSongClicked","songs")
         bundle.putInt("pos",pos)
         bundle.putSerializable("musicList",list as java.io.Serializable)
         findNavController().navigate(R.id.action_musicHome_to_musicPlayer,bundle)
