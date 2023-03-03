@@ -65,7 +65,8 @@ class MusicHome : Fragment() {
         })
         binding.shuffleBtn.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString("onShuffleClicked","songs")
+            bundle.putString("onShuffleClicked","shuffleSongs")
+            bundle.putInt("pos",0)
             bundle.putSerializable("musicList",musicList as java.io.Serializable)
             findNavController().navigate(R.id.action_musicHome_to_musicPlayer,bundle)
         }

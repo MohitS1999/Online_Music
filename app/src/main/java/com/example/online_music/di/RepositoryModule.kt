@@ -2,8 +2,6 @@ package com.example.online_music.di
 
 import com.example.online_music.repository.MusicRepository
 import com.example.online_music.repository.MusicRepositoryImp
-import com.example.online_music.repository.PlayerRepository
-import com.example.online_music.repository.PlayerRepositoryImp
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
@@ -24,10 +22,6 @@ object RepositoryModule {
         return MusicRepositoryImp(database)
     }
 
-    @Provides
-    @Singleton
-    fun providesPlayerRepository():PlayerRepository{
-        return PlayerRepositoryImp()
-    }
+
 
 }
