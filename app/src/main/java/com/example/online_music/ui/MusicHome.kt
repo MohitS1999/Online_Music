@@ -115,7 +115,6 @@ class MusicHome : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        requireActivity().onBackPressed()
         Log.d(TAG, "onDestroy: ")
     }
 

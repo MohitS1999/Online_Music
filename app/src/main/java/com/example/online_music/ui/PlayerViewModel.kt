@@ -51,11 +51,16 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
         Log.d(TAG, "startedtMyService: ")
     }
 
+    fun unbindService(context: Context) {
+        Log.d(TAG, "unbindService: ")
+        context.unbindService(serviceConnection)
+    }
 
 
     fun createMediaPlayer(url: String) {
-    _firstSong.postValue(UiState.Loading)
-        if (musicService!!.mediaPlayer == null){
+        _firstSong.postValue(UiState.Loading)
+        if (musicService!!.mediaPlayer == null) {
+            Log.d(TAG, "createMediaPlayer: mediaplayer creating")
             musicService?.mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
@@ -100,6 +105,7 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
 
     fun bindToService() {
         _isServiceBound.postValue(UiState.Loading)
+
         serviceConnection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
 
@@ -117,6 +123,8 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
             }
 
         }
+
+
     }
 
 

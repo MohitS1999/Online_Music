@@ -63,10 +63,7 @@ class MusicPlayer : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
         viewModel.startMyService(requireContext() )
-
 
         musicList = (arguments?.getSerializable("musicList") as? ArrayList<MusicData>)!!
         position = arguments?.getInt("pos")!!
@@ -207,12 +204,22 @@ class MusicPlayer : Fragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: ")
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop: ")
+
+    }
 
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: ")
-
     }
 
 
