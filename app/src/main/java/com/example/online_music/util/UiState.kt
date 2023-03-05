@@ -12,19 +12,3 @@ sealed class UiState<out T> {
     data class Failure(val error: String?): UiState<Nothing>()
 }
 
-fun getBitmapFromUrl(url: String,context: Context): Bitmap? {
-    return try {
-        val options = RequestOptions()
-            .override(200, 200)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-
-        Glide.with(context)
-            .asBitmap()
-            .load(url)
-            .apply(options)
-            .submit()
-            .get()
-    } catch (e: Exception) {
-        null
-    }
-}

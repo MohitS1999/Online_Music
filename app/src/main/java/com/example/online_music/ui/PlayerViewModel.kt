@@ -52,9 +52,10 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
     }
 
 
-    fun initialzeMediaPlayer(){
-        try{
-            Log.d(TAG, "initialize media player: ")
+
+    fun createMediaPlayer(url: String) {
+    _firstSong.postValue(UiState.Loading)
+        if (musicService!!.mediaPlayer == null){
             musicService?.mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
                     AudioAttributes.Builder()
@@ -63,17 +64,7 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
                         .build()
                 )
             }
-            Log.d(TAG, "${musicService?.mediaPlayer} ")
-        }catch (e:Exception){
-            Log.d(TAG, "initiableMediaPlayerObject: -> ${e.printStackTrace()}")
         }
-    }
-    fun playFirstSong(url: String) {
-        _firstSong.postValue(UiState.Loading)
-        Log.d(TAG, "playFirstSong: $musicService")
-
-        Log.d(TAG, "playFirstSong: $musicService")
-        if (musicService!!.mediaPlayer == null) initialzeMediaPlayer()
         if (musicService?.mediaPlayer?.isPlaying == true) {
             musicService?.mediaPlayer!!.stop()
         }
@@ -82,6 +73,7 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
             musicService?.mediaPlayer?.setDataSource(url)
             musicService?.mediaPlayer?.setOnPreparedListener { musicService?.mediaPlayer?.start() }
             musicService?.mediaPlayer?.prepareAsync()
+            musicService!!.showNotification(R.drawable.pause_music_icon)
         } catch (e: IOException) {
             Log.d(TAG, "initPlayer: ${e.printStackTrace()}")
         }
@@ -113,7 +105,7 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
 
                 val binder = service as MusicService.MyBinder
                 musicService = binder.currentService()
-                musicService!!.showNotification(R.drawable.pause_music_icon)
+                createMediaPlayer(MusicPlayer.musicList[MusicPlayer.position].songUrl)
                 Log.d(TAG, "onServiceConnected: ${musicService.toString()}")
                 _isServiceBound.postValue(UiState.Success(true))
             }

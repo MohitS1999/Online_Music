@@ -24,6 +24,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.online_music.R
 import com.example.online_music.databinding.FragmentMusicPlayerBinding
 import com.example.online_music.model.MusicData
+import com.example.online_music.model.setSongPosition
 import com.example.online_music.service.MusicService
 import com.example.online_music.util.UiState
 import dagger.hilt.android.AndroidEntryPoint
@@ -160,7 +161,7 @@ class MusicPlayer : Fragment() {
         observer()
 
         Handler(Looper.getMainLooper()).post {
-            viewModel.playFirstSong(musicList.get(position).songUrl)
+            viewModel.createMediaPlayer(musicList.get(position).songUrl)
         }
 
         isPlaying = true
@@ -206,15 +207,7 @@ class MusicPlayer : Fragment() {
         }
     }
 
-    private fun setSongPosition(increment: Boolean){
-        if (increment){
-            if(musicList.size-1 == position) position = 0
-            else ++position
-        }else{
-            if (position == 0) position = musicList.size - 1
-            else --position
-        }
-    }
+
 
     override fun onDestroy() {
         super.onDestroy()

@@ -1,29 +1,22 @@
 package com.example.online_music.service
 
-import android.app.Application
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.FutureTarget
 import com.example.online_music.MyApplication
 import com.example.online_music.R
+import com.example.online_music.model.getBitmapFromUrl
 import com.example.online_music.ui.MusicPlayer
 import com.example.online_music.ui.PlayerViewModel
-import com.example.online_music.util.getBitmapFromUrl
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
-import java.net.URL
+import com.example.online_music.util.UiState
+import java.io.IOException
 
 private const val TAG = "MusicService"
 class MusicService :Service() {
@@ -60,7 +53,6 @@ class MusicService :Service() {
 
 
         val bitmap = getBitmapFromUrl(MusicPlayer.musicList[MusicPlayer.position].imageUrl,baseContext)
-        val image = bitmap ?: R.drawable.jmdphoto
         val notification = NotificationCompat.Builder(baseContext,MyApplication.CHANNEL_ID)
             .setContentTitle(MusicPlayer.musicList[MusicPlayer.position].songName)
             .setContentText(MusicPlayer.musicList[MusicPlayer.position].singerName)
@@ -80,6 +72,30 @@ class MusicService :Service() {
 
         startForeground(101,notification)
 
+    }
+
+    fun createMediaPlayer(url: String) {
+        if (PlayerViewModel.musicService!!.mediaPlayer == null){
+            PlayerViewModel.musicService?.mediaPlayer = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .build()
+                )
+            }
+        }
+        if (PlayerViewModel.musicService?.mediaPlayer?.isPlaying == true) {
+            PlayerViewModel.musicService?.mediaPlayer!!.stop()
+        }
+        PlayerViewModel.musicService?.mediaPlayer!!.reset()
+        try {
+            PlayerViewModel.musicService?.mediaPlayer?.setDataSource(url)
+            PlayerViewModel.musicService?.mediaPlayer?.prepareAsync()
+            PlayerViewModel.musicService!!.showNotification(R.drawable.pause_music_icon)
+        } catch (e: IOException) {
+            Log.d(TAG, "initPlayer: ${e.printStackTrace()}")
+        }
     }
 
 
