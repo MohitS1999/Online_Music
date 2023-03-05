@@ -113,4 +113,12 @@ class MusicHome : Fragment() {
         findNavController().navigate(R.id.action_musicHome_to_musicPlayer,bundle)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().onBackPressed()
+        Log.d(TAG, "onDestroy: ")
+    }
+
+
+
 }

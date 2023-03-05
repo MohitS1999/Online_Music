@@ -1,5 +1,6 @@
 package com.example.online_music.ui
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
@@ -35,17 +36,19 @@ private const val TAG = "MusicPlayer"
 @AndroidEntryPoint
 class MusicPlayer : Fragment() {
 
-    private lateinit var musicList:ArrayList<MusicData>
+
 
 
     private val viewModel by viewModels<PlayerViewModel>()
-    private  lateinit var binding: FragmentMusicPlayerBinding
 
     companion object{
-        private var position:Int = 0
-        private val clickOnSongs:String= "songs"
-        private val clickOnShuffle:String = "shuffleSongs"
-        private var isPlaying:Boolean = false
+        lateinit var musicList:ArrayList<MusicData>
+        var position:Int = 0
+        val clickOnSongs:String= "songs"
+        val clickOnShuffle:String = "shuffleSongs"
+        var isPlaying:Boolean = false
+        @SuppressLint("StaticFieldLeak")
+        lateinit var binding: FragmentMusicPlayerBinding
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -215,9 +218,10 @@ class MusicPlayer : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        isPlaying = false
-        viewModel.destroy()
+        Log.d(TAG, "onDestroy: ")
+
     }
+
 
 
 }

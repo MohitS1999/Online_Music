@@ -1,5 +1,6 @@
 package com.example.online_music.ui
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
@@ -12,6 +13,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.online_music.R
 import com.example.online_music.service.MusicService
 import com.example.online_music.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +29,8 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
 
 
     companion object {
-        private var musicService: MusicService? = null
+        @SuppressLint("StaticFieldLeak")
+        var musicService: MusicService? = null
         private lateinit var serviceConnection: ServiceConnection
     }
 
@@ -88,10 +91,12 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
     }
 
     fun playMusic() {
+        musicService!!.showNotification(R.drawable.pause_music_icon)
         musicService?.mediaPlayer!!.start()
     }
 
     fun pauseMusic() {
+        musicService!!.showNotification(R.drawable.play_music_icon)
         musicService?.mediaPlayer!!.pause()
     }
 
@@ -108,6 +113,7 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
 
                 val binder = service as MusicService.MyBinder
                 musicService = binder.currentService()
+                musicService!!.showNotification(R.drawable.pause_music_icon)
                 Log.d(TAG, "onServiceConnected: ${musicService.toString()}")
                 _isServiceBound.postValue(UiState.Success(true))
             }
