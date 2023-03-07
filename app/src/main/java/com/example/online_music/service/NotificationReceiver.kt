@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.online_music.MyApplication
 import com.example.online_music.R
+import com.example.online_music.model.formatDuration
 import com.example.online_music.model.setSongPosition
 import com.example.online_music.ui.MusicPlayer
 import com.example.online_music.ui.PlayerViewModel
@@ -43,9 +44,21 @@ class NotificationReceiver : BroadcastReceiver() {
 
     private fun playMusic(){
         MusicPlayer.isPlaying = true
-        PlayerViewModel.musicService!!.mediaPlayer!!.start()
+        PlayerViewModel.musicService?.mediaPlayer?.setOnPreparedListener {
+
+                PlayerViewModel.musicService!!.mediaPlayer!!.start()
+                setSeekbar()
+
+            }
         PlayerViewModel.musicService!!.showNotification(R.drawable.pause_music_icon)
         MusicPlayer.binding.playPauseMusicBtn.setImageResource(R.drawable.pause_music_icon)
+    }
+
+    fun setSeekbar(){
+        MusicPlayer.binding.seekBarStart.text = formatDuration(PlayerViewModel.musicService!!.mediaPlayer!!.currentPosition.toLong())
+        MusicPlayer.binding.seekBarEnd.text = formatDuration(PlayerViewModel.musicService!!.mediaPlayer!!.duration.toLong())
+        MusicPlayer.binding.seekBarPA.progress = 0
+        MusicPlayer.binding.seekBarPA.max = PlayerViewModel.musicService!!.mediaPlayer!!.duration
     }
 
     private fun pauseMusic(){

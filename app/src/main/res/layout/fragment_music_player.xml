@@ -105,7 +105,7 @@
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/startTime"
+            android:id="@+id/seekBarStart"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textColor="@color/black"
@@ -115,12 +115,13 @@
             android:text="00:00"/>
 
         <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekBarPA"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
 
         <TextView
-            android:id="@+id/endTime"
+            android:id="@+id/seekBarEnd"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textColor="@color/black"

@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.online_music.R
 import com.example.online_music.databinding.FragmentMusicPlayerBinding
 import com.example.online_music.model.MusicData
+import com.example.online_music.model.formatDuration
 import com.example.online_music.model.setSongPosition
 import com.example.online_music.service.MusicService
 import com.example.online_music.util.UiState
@@ -62,6 +64,7 @@ class MusicPlayer : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewCreated: ")
         super.onViewCreated(view, savedInstanceState)
         viewModel.startMyService(requireContext() )
 
@@ -85,10 +88,25 @@ class MusicPlayer : Fragment() {
             prevNextSong(true)
         }
 
-        Log.d(TAG, "onViewCreated: $position")
+
+        binding.seekBarPA.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    PlayerViewModel.musicService!!.mediaPlayer!!.seekTo(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                PlayerViewModel.musicService!!.mediaPlayer!!.seekTo(seekBar?.progress ?: 0)
+            }
+        })
+
     }
 
     private fun sendDataToPlayerView() {
+        Log.d(TAG, "sendDataToPlayerView: ")
         viewModel.isServiceBound.observe(viewLifecycleOwner){
             when(it){
                 is UiState.Success -> {
@@ -99,6 +117,7 @@ class MusicPlayer : Fragment() {
                     binding.prevMusicBtn.imageAlpha = 255
                     binding.nextMusicBtn.isEnabled = true
                     binding.nextMusicBtn.imageAlpha = 255
+                    binding.seekBarPA.isEnabled = true
                     if (arguments?.getString("onSongClicked").equals(clickOnSongs)){
                         Log.d(TAG, "onViewCreated: onsong")
                         initializeLayout()
@@ -117,6 +136,8 @@ class MusicPlayer : Fragment() {
                     binding.prevMusicBtn.imageAlpha = 75
                     binding.nextMusicBtn.isEnabled = false
                     binding.nextMusicBtn.imageAlpha = 75
+                    binding.seekBarPA.isEnabled = false
+
                 }
                 is UiState.Failure ->{}
             }
@@ -160,6 +181,10 @@ class MusicPlayer : Fragment() {
         Handler(Looper.getMainLooper()).post {
             viewModel.createMediaPlayer(musicList.get(position).songUrl)
         }
+        // initializing the seek bar
+
+
+
 
         isPlaying = true
         binding.playPauseMusicBtn.setImageResource(R.drawable.pause_music_icon)

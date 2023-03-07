@@ -14,6 +14,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.online_music.R
+import com.example.online_music.model.formatDuration
 import com.example.online_music.service.MusicService
 import com.example.online_music.util.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -59,26 +60,32 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
 
     fun createMediaPlayer(url: String) {
         _firstSong.postValue(UiState.Loading)
-        if (musicService!!.mediaPlayer == null) {
-            Log.d(TAG, "createMediaPlayer: mediaplayer creating")
-            musicService?.mediaPlayer = MediaPlayer().apply {
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .build()
-                )
-            }
-        }
-        if (musicService?.mediaPlayer?.isPlaying == true) {
-            musicService?.mediaPlayer!!.stop()
-        }
-        musicService?.mediaPlayer!!.reset()
         try {
+            if (musicService!!.mediaPlayer == null) {
+                Log.d(TAG, "createMediaPlayer: mediaplayer creating")
+                musicService?.mediaPlayer = MediaPlayer().apply {
+                    setAudioAttributes(
+                        AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .build()
+                    )
+                }
+            }
+            if (musicService?.mediaPlayer?.isPlaying == true) {
+                musicService?.mediaPlayer!!.stop()
+            }
+            musicService?.mediaPlayer!!.reset()
+            MusicPlayer.binding.seekBarEnd.text = "loading..."
+
             musicService?.mediaPlayer?.setDataSource(url)
-            musicService?.mediaPlayer?.setOnPreparedListener { musicService?.mediaPlayer?.start() }
+            musicService?.mediaPlayer?.setOnPreparedListener {
+                playMusic()
+                setSeekbar()
+            }
             musicService?.mediaPlayer?.prepareAsync()
             musicService!!.showNotification(R.drawable.pause_music_icon)
+
         } catch (e: IOException) {
             Log.d(TAG, "initPlayer: ${e.printStackTrace()}")
         }
@@ -86,6 +93,14 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
 
         _firstSong.postValue(UiState.Success(1))
     }
+
+    fun setSeekbar(){
+        MusicPlayer.binding.seekBarStart.text = formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+        MusicPlayer.binding.seekBarEnd.text = formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+        MusicPlayer.binding.seekBarPA.progress = 0
+        MusicPlayer.binding.seekBarPA.max = musicService!!.mediaPlayer!!.duration
+    }
+
 
     fun playMusic() {
         musicService!!.showNotification(R.drawable.pause_music_icon)
@@ -112,6 +127,7 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
                 val binder = service as MusicService.MyBinder
                 musicService = binder.currentService()
                 createMediaPlayer(MusicPlayer.musicList[MusicPlayer.position].songUrl)
+                musicService!!.seekBarSetup()
                 Log.d(TAG, "onServiceConnected: ${musicService.toString()}")
                 _isServiceBound.postValue(UiState.Success(true))
             }
@@ -123,7 +139,6 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
             }
 
         }
-
 
     }
 
