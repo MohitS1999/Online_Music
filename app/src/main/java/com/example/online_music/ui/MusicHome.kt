@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -80,7 +81,7 @@ class MusicHome : Fragment() {
             findNavController().navigate(R.id.action_musicHome_to_musicPlayer,bundle)
         }
         binding.favoriteBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_musicHome_to_favoriteFragment,Bundle().apply {  })
+            Toast.makeText(requireContext(),"Thank for like",Toast.LENGTH_SHORT).show()
         }
     }
 

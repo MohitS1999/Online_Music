@@ -80,19 +80,7 @@
         app:layout_constraintStart_toEndOf="@+id/musicRL"
         app:layout_constraintTop_toBottomOf="@+id/songMusicName" />
 
-    <ImageButton
-        android:id="@+id/favPlayerbtnRV"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/_50sdp"
-        android:background="@android:color/transparent"
 
-        android:src="@drawable/favorite_empty_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.487"
-android:layout_marginEnd="@dimen/_10sdp"
-        app:tint="@color/favouriteColor" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

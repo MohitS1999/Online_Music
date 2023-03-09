@@ -45,12 +45,21 @@ class NotificationReceiver : BroadcastReceiver() {
     }
 
     private fun playMusic() {
+        MusicPlayer.isPlaying = true
+        PlayerViewModel.musicService!!.mediaPlayer!!.start()
+        PlayerViewModel.musicService!!.showNotification(R.drawable.pause_music_icon)
+        MusicPlayer.binding.playPauseMusicBtn.setImageResource(R.drawable.pause_music_icon)
+        NowPlaying.binding.playPauseBtnNP.setIconResource(R.drawable.pause_pa_icon)
+    }
+
+    private fun startMusic() {
         Log.d(TAG, "playMusic: ")
         MusicPlayer.isPlaying = true
         PlayerViewModel.musicService?.mediaPlayer?.setOnPreparedListener {
             PlayerViewModel.musicService!!.mediaPlayer!!.start()
             setSeekbar()
         }
+
 
         PlayerViewModel.musicService!!.showNotification(R.drawable.pause_music_icon)
         MusicPlayer.binding.playPauseMusicBtn.setImageResource(R.drawable.pause_music_icon)
@@ -95,7 +104,7 @@ class NotificationReceiver : BroadcastReceiver() {
         NowPlaying.binding.songImpNP.setImageBitmap(img)
         NowPlaying.binding.songMusicNamePA.text =
             MusicPlayer.musicList[MusicPlayer.position].songName
-        playMusic()
+        startMusic()
     }
 
 
