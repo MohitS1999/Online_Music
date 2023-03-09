@@ -13,10 +13,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.online_music.R
-import com.example.online_music.model.formatDuration
 import com.example.online_music.service.MusicService
 import com.example.online_music.util.UiState
+import com.example.online_music.util.formatDuration
+import com.example.online_music.util.setSongPosition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.IOException
@@ -32,7 +35,10 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
     companion object {
         @SuppressLint("StaticFieldLeak")
         var musicService: MusicService? = null
+        @SuppressLint("StaticFieldLeak")
+        var contextMusicPlayer: Context? = null
         private lateinit var serviceConnection: ServiceConnection
+
     }
 
     private val _firstSong = MutableLiveData<UiState<Int>>()
@@ -44,11 +50,13 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
         get() = _isServiceBound
 
     fun startMyService(context: Context) {
+        Log.d(TAG, "startMyService: ")
         // for starting service
-
+        contextMusicPlayer = context
         val intent = Intent(context, MusicService::class.java)
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         context.startService(intent)
+
         Log.d(TAG, "startedtMyService: ")
     }
 
@@ -72,6 +80,7 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
                     )
                 }
             }
+            Log.d(TAG, "createMediaPlayer:- ")
             if (musicService?.mediaPlayer?.isPlaying == true) {
                 musicService?.mediaPlayer!!.stop()
             }
@@ -85,6 +94,16 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
             }
             musicService?.mediaPlayer?.prepareAsync()
             musicService!!.showNotification(R.drawable.pause_music_icon)
+           /* musicService!!.mediaPlayer!!.setOnCompletionListener {
+                Log.d(TAG, "onCompletion: ")
+                setSongPosition(true)
+                createMediaPlayer(MusicPlayer.musicList[MusicPlayer.position].songUrl)
+                try {
+                    contextMusicPlayer?.let { setContentLayout(it) }
+                } catch (e: Exception) {
+                    Log.d(TAG, "onCompletion: ${e.printStackTrace()}")
+                }
+            }*/
 
         } catch (e: IOException) {
             Log.d(TAG, "initPlayer: ${e.printStackTrace()}")
@@ -140,6 +159,20 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
 
         }
 
+    }
+
+
+    fun setContentLayout(context: Context) {
+        Log.d(TAG, "setContentLayout: start")
+        Glide.with(context)
+            .load(MusicPlayer.musicList.get(MusicPlayer.position).imageUrl)
+            .fitCenter()
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .error(com.google.android.material.R.drawable.mtrl_ic_error)
+            .into(MusicPlayer.binding.imagePlayer)
+        MusicPlayer.binding.songNamePlayer.text = MusicPlayer.musicList.get(MusicPlayer.position).songName
+        MusicPlayer.binding.singerNamePlayer.text = MusicPlayer.musicList.get(MusicPlayer.position).singerName
+        Log.d(TAG, "setContentLayout: finish")
     }
 
 

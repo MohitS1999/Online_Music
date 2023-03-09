@@ -25,12 +25,13 @@ import com.example.online_music.model.MusicData
 import com.example.online_music.util.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_music_home.*
+import kotlin.system.exitProcess
 
 private const val TAG = "MusicHome"
 @AndroidEntryPoint
 class MusicHome : Fragment() {
     private lateinit var binding: FragmentMusicHomeBinding
-    private lateinit var musicList:ArrayList<MusicData>
+    lateinit var musicList:ArrayList<MusicData>
     private lateinit var musicAdapter:MusicAdapter
     private val viewModel by viewModels<MusicViewModel>()
 
@@ -115,6 +116,13 @@ class MusicHome : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG, "onDestroy: ${PlayerViewModel.musicService!!.mediaPlayer}")
+        if (!MusicPlayer.isPlaying && PlayerViewModel.musicService!!.mediaPlayer != null){
+            PlayerViewModel.musicService!!.stopForeground(true)
+            PlayerViewModel.musicService!!.mediaPlayer!!.release()
+            PlayerViewModel.musicService = null
+            exitProcess(1)
+        }
         Log.d(TAG, "onDestroy: ")
     }
 

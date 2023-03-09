@@ -14,11 +14,11 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.online_music.MyApplication
 import com.example.online_music.R
-import com.example.online_music.model.formatDuration
-import com.example.online_music.model.getBitmapFromUrl
 import com.example.online_music.ui.MusicPlayer
 import com.example.online_music.ui.PlayerViewModel
 import com.example.online_music.util.UiState
+import com.example.online_music.util.formatDuration
+import com.example.online_music.util.getBitmapFromUrl
 import java.io.IOException
 
 private const val TAG = "MusicService"
@@ -90,6 +90,7 @@ class MusicService :Service() {
                     )
                 }
             }
+            Log.d(TAG, "createMediaPlayer: ")
             if (PlayerViewModel.musicService?.mediaPlayer?.isPlaying == true) {
                 PlayerViewModel.musicService?.mediaPlayer!!.stop()
             }
@@ -121,7 +122,7 @@ class MusicService :Service() {
         runnable = Runnable {
             MusicPlayer.binding.seekBarStart.text = formatDuration(mediaPlayer!!.currentPosition.toLong())
             MusicPlayer.binding.seekBarPA.progress = mediaPlayer!!.currentPosition
-            Handler(Looper.getMainLooper()).postDelayed(runnable,200)
+            Handler(Looper.getMainLooper()).postDelayed(runnable,400)
         }
         // when this runnable will start i.e. time is 0sec mean it will start immediate
         Handler(Looper.getMainLooper()).postDelayed(runnable,0)

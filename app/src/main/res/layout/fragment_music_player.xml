@@ -141,13 +141,22 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/repeatMusic"
+            android:id="@+id/repeatBtnPA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/repeat"
             android:layout_gravity="center"
-            android:layout_margin="20dp"
+            android:layout_margin="@dimen/_10sdp"
             app:tint="@color/text_color" />
+
+        <ImageView
+            android:id="@+id/equalizerBtnPA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/equalizer_icon"
+            android:layout_gravity="center"
+            app:tint="@color/text_color" />
+
 
         <View
             android:layout_width="110dp"

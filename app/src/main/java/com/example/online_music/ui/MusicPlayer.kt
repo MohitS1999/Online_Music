@@ -1,10 +1,10 @@
 package com.example.online_music.ui
 
 import android.annotation.SuppressLint
-import android.content.ComponentName
-import android.content.Context.BIND_AUTO_CREATE
+import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.content.ServiceConnection
+import android.media.audiofx.AudioEffect
+import android.media.audiofx.DynamicsProcessing.Eq
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -16,23 +16,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.online_music.R
 import com.example.online_music.databinding.FragmentMusicPlayerBinding
 import com.example.online_music.model.MusicData
-import com.example.online_music.model.formatDuration
-import com.example.online_music.model.setSongPosition
-import com.example.online_music.service.MusicService
 import com.example.online_music.util.UiState
+import com.example.online_music.util.formatDuration
+import com.example.online_music.util.setSongPosition
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_music_player.*
 import kotlinx.android.synthetic.main.fragment_music_player.view.*
 import kotlinx.coroutines.*
 import kotlin.math.log
+import kotlin.system.exitProcess
 
 private const val TAG = "MusicPlayer"
 
@@ -40,19 +44,20 @@ private const val TAG = "MusicPlayer"
 class MusicPlayer : Fragment() {
 
 
-
-
     private val viewModel by viewModels<PlayerViewModel>()
-
-    companion object{
-        lateinit var musicList:ArrayList<MusicData>
-        var position:Int = 0
-        val clickOnSongs:String= "songs"
-        val clickOnShuffle:String = "shuffleSongs"
-        var isPlaying:Boolean = false
+    companion object {
+        lateinit var musicList: ArrayList<MusicData>
+        var position: Int = 0
+        val clickOnSongs: String = "songs"
+        val clickOnShuffle: String = "shuffleSongs"
+        val clickOnNowPlayer:String = "nowplaying"
+        var isPlaying: Boolean = false
+        var repeat: Boolean = false
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: FragmentMusicPlayerBinding
+
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,14 +71,30 @@ class MusicPlayer : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.d(TAG, "onViewCreated: ")
         super.onViewCreated(view, savedInstanceState)
-        viewModel.startMyService(requireContext() )
 
-        musicList = (arguments?.getSerializable("musicList") as? ArrayList<MusicData>)!!
-        position = arguments?.getInt("pos")!!
+        if ((arguments?.getString("onSongClicked").equals(clickOnSongs)) ||
+            (arguments?.getString("onShuffleClicked").equals(clickOnShuffle))) {
+            viewModel.startMyService(requireContext())
+            musicList = (arguments?.getSerializable("musicList") as? ArrayList<MusicData>)!!
+            position = arguments?.getInt("pos")!!
+            //Start the first song after binding the service
+            sendDataToPlayerView()
+        }
 
-        //Start the first song after binding the service
-
-        sendDataToPlayerView()
+        //when we clicked on now playing fragment
+        if (arguments?.getString("onNowPlayedClicked").equals(clickOnNowPlayer)){
+            Log.d(TAG, "sendDataToPlayerView: onNowPlayedClicked")
+            viewModel.setContentLayout(requireContext())
+            if (isPlaying){
+                binding.playPauseMusicBtn.setImageResource(R.drawable.pause_music_icon)
+            }else{
+                binding.playPauseMusicBtn.setImageResource(R.drawable.play_music_icon)
+            }
+            binding.seekBarStart.text = formatDuration(PlayerViewModel.musicService!!.mediaPlayer!!.currentPosition.toLong())
+            binding.seekBarEnd.text = formatDuration(PlayerViewModel.musicService!!.mediaPlayer!!.duration.toLong())
+            binding.seekBarPA.progress = PlayerViewModel.musicService!!.mediaPlayer!!.currentPosition
+            binding.seekBarPA.max = PlayerViewModel.musicService!!.mediaPlayer!!.duration
+        }
 
 
         binding.playPauseMusicBtn.setOnClickListener {
@@ -89,7 +110,7 @@ class MusicPlayer : Fragment() {
         }
 
 
-        binding.seekBarPA.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+        binding.seekBarPA.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     PlayerViewModel.musicService!!.mediaPlayer!!.seekTo(progress)
@@ -103,12 +124,39 @@ class MusicPlayer : Fragment() {
             }
         })
 
+        binding.repeatBtnPA.setOnClickListener {
+            if (!repeat){
+                repeat = true
+                binding.repeatBtnPA.setColorFilter(ContextCompat.getColor(requireContext(),R.color.icon_color))
+            }else{
+                repeat = false
+                binding.repeatBtnPA.setColorFilter(ContextCompat.getColor(requireContext(),R.color.text_color))
+            }
+        }
+
+        binding.equalizerBtnPA.setOnClickListener {
+            try {
+                val EqIntent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL)
+                EqIntent.putExtra(AudioEffect.EXTRA_AUDIO_SESSION,PlayerViewModel.musicService!!.mediaPlayer!!.audioSessionId)
+                EqIntent.putExtra(AudioEffect.EXTRA_PACKAGE_NAME, requireContext().packageName)
+                EqIntent.putExtra(AudioEffect.EXTRA_CONTENT_TYPE,AudioEffect.CONTENT_TYPE_MUSIC)
+                startActivityForResult(EqIntent,13)
+            }catch (e:Exception){
+                Toast.makeText(requireContext(),"Equalizer feature not supported ",Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+        binding.backPlayerBtn.setOnClickListener { findNavController().popBackStack() }
+
     }
+
+
 
     private fun sendDataToPlayerView() {
         Log.d(TAG, "sendDataToPlayerView: ")
-        viewModel.isServiceBound.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.isServiceBound.observe(viewLifecycleOwner) {
+            when (it) {
                 is UiState.Success -> {
                     Log.d(TAG, "observer: binding service Success")
                     binding.playPauseMusicBtn.visibility = View.VISIBLE
@@ -118,15 +166,16 @@ class MusicPlayer : Fragment() {
                     binding.nextMusicBtn.isEnabled = true
                     binding.nextMusicBtn.imageAlpha = 255
                     binding.seekBarPA.isEnabled = true
-                    if (arguments?.getString("onSongClicked").equals(clickOnSongs)){
-                        Log.d(TAG, "onViewCreated: onsong")
+                    if (arguments?.getString("onSongClicked").equals(clickOnSongs)) {
+                        Log.d(TAG, "sendDataToPlayerView: on songClicked")
                         initializeLayout()
                     }
                     if (arguments?.getString("onShuffleClicked").equals(clickOnShuffle)) {
-                        Log.d(TAG, "onViewCreated: click on shuffle")
+                        Log.d(TAG, "sendDataToPlayerView: on shuffle clicked")
                         musicList.shuffle()
                         initializeLayout()
                     }
+
                 }
                 is UiState.Loading -> {
                     Log.d(TAG, "observer: service loading...")
@@ -139,7 +188,7 @@ class MusicPlayer : Fragment() {
                     binding.seekBarPA.isEnabled = false
 
                 }
-                is UiState.Failure ->{}
+                is UiState.Failure -> {}
             }
         }
     }
@@ -173,7 +222,6 @@ class MusicPlayer : Fragment() {
     }
 
     private fun initializeLayout() {
-        setContentLayout()
         Log.d(TAG, "initializeLayout: ")
 
         observer()
@@ -181,9 +229,11 @@ class MusicPlayer : Fragment() {
         Handler(Looper.getMainLooper()).post {
             viewModel.createMediaPlayer(musicList.get(position).songUrl)
         }
+        viewModel.setContentLayout(requireContext())
+        if (repeat){
+            binding.repeatBtnPA.setColorFilter(ContextCompat.getColor(requireContext(),R.color.icon_color))
+        }
         // initializing the seek bar
-
-
 
 
         isPlaying = true
@@ -192,38 +242,24 @@ class MusicPlayer : Fragment() {
     }
 
 
-
-    private fun setContentLayout() {
-        Log.d(TAG, "setContentLayout: start")
-        Glide.with(this)
-            .load(musicList.get(position).imageUrl)
-            .fitCenter()
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .error(com.google.android.material.R.drawable.mtrl_ic_error)
-            .into(binding.imagePlayer)
-        binding.songNamePlayer.text = musicList.get(position).songName
-        binding.singerNamePlayer.text = musicList.get(position).singerName
-        Log.d(TAG, "setContentLayout: finish")
-    }
-
-    private fun playMusic(){
+    private fun playMusic() {
         binding.playPauseMusicBtn.setImageResource(R.drawable.pause_music_icon)
         isPlaying = true
         viewModel.playMusic()
     }
 
-    private fun pauseMusic(){
+    private fun pauseMusic() {
         binding.playPauseMusicBtn.setImageResource(R.drawable.play_music_icon)
         isPlaying = false
         viewModel.pauseMusic()
     }
 
-    private fun prevNextSong(increment:Boolean){
-
-        if (increment){
+    private fun prevNextSong(increment: Boolean) {
+        Log.d(TAG, "prevNextSong: setsongposition")
+        if (increment) {
             setSongPosition(increment)
             initializeLayout()
-        }else{
+        } else {
             setSongPosition(increment)
             initializeLayout()
         }
@@ -241,12 +277,19 @@ class MusicPlayer : Fragment() {
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 13 || resultCode == RESULT_OK){
+            return
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
+
         Log.d(TAG, "onDestroy: ")
     }
-
 
 
 }
