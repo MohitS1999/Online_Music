@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_55sdp"
+    android:layout_height="@dimen/_45sdp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/now_play_bg"
+    android:background="@color/text_color"
     tools:context=".ui.NowPlaying">
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -19,8 +19,8 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/nextBtnNP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginVertical="@dimen/_5sdp"
@@ -34,8 +34,8 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/playPauseBtnNP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
         android:layout_marginStart="@dimen/_3sdp"
         android:backgroundTint="@color/text_color"
         android:clickable="true"
@@ -51,19 +51,23 @@
     <TextView
         android:id="@+id/songMusicNamePA"
         android:layout_width="0dp"
-        android:layout_height="@dimen/_25sdp"
-        android:layout_toEndOf="@id/songImpNP"
-        android:layout_toStartOf="@id/playPauseBtnNP"
-        android:text="song name sdnjskfdsjdfnjkdsfn "
-        android:textStyle="bold"
+        android:layout_height="@dimen/_43sdp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginHorizontal="@dimen/_5sdp"
-        android:textSize="@dimen/_18ssp"
-        android:textColor="@color/white"
-        android:gravity="start"
-        android:layout_marginVertical="@dimen/_15sdp"
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="13dp"
+        android:layout_toStartOf="@id/playPauseBtnNP"
+        android:layout_toEndOf="@id/songImpNP"
         android:ellipsize="marquee"
+        android:gravity="start"
         android:marqueeRepeatLimit="marquee_forever"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        android:text="song name sdnjskfdsjdfnjkdsfn "
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold" />
 
 
 

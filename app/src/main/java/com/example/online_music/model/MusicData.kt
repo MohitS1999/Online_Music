@@ -15,7 +15,8 @@ data class MusicData(
     val songUrl:String = "",
     val imageUrl:String ="",
     val singerName:String ="",
-    val time:String =""
+    val time:String ="",
+    var isFavourite: Boolean = false
 ) : java.io.Serializable
 
 

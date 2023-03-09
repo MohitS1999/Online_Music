@@ -1,5 +1,6 @@
 package com.example.online_music.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -30,10 +31,16 @@ import kotlin.system.exitProcess
 private const val TAG = "MusicHome"
 @AndroidEntryPoint
 class MusicHome : Fragment() {
-    private lateinit var binding: FragmentMusicHomeBinding
+
     lateinit var musicList:ArrayList<MusicData>
     private lateinit var musicAdapter:MusicAdapter
     private val viewModel by viewModels<MusicViewModel>()
+
+
+    companion object{
+        @SuppressLint("StaticFieldLeak")
+        lateinit var binding: FragmentMusicHomeBinding
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +49,7 @@ class MusicHome : Fragment() {
         // Inflate the layout for this fragment
 
         binding = FragmentMusicHomeBinding.inflate(layoutInflater)
+        binding.nowPlaying.visibility = View.GONE
         return binding.root
     }
 

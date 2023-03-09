@@ -25,11 +25,11 @@
             android:background="@android:color/transparent"
             android:layout_margin="10dp"
             android:layout_marginStart="20dp"
-            android:padding="5dp"
+            android:padding="@dimen/_5sdp"
             app:tint="@color/icon_color" />
         <View
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/_45sdp"
             android:layout_weight="3"/>
 
         <ImageButton
@@ -38,9 +38,9 @@
             android:layout_height="50dp"
             android:src="@drawable/favorite_empty_icon"
             android:background="@android:color/transparent"
-            app:tint="@color/icon_color"
-            android:layout_margin="10dp"
-            android:layout_marginStart="20dp"
+            app:tint="@color/favouriteColor"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_20sdp"
             android:padding="5dp"/>
 
     </LinearLayout>
@@ -48,7 +48,7 @@
     <ImageView
         android:id="@+id/imagePlayer"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="@dimen/_250sdp"
         android:src="@mipmap/ic_launcher_round"
         app:layout_constraintTop_toBottomOf="@id/topview"
         app:layout_constraintEnd_toEndOf="parent"

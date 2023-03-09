@@ -20,6 +20,20 @@
         android:background="@drawable/search_view_bg"
         app:queryHint="Search here..."
         android:focusable="true" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/musicRV"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nowPlaying"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_45sdp"
+        android:name="com.example.online_music.ui.NowPlaying"
+        tools:layout="@layout/fragment_now_playing"/>
     <LinearLayout
         android:id="@+id/bottom_view"
         android:layout_width="match_parent"
@@ -36,6 +50,7 @@
             android:drawableTop="@drawable/shuffle_icon"
             android:drawableTint="@color/icon_color"
             android:text="Shuffle"
+            android:drawablePadding="5dp"
             android:textAllCaps="false"
             android:textColor="@color/text_color"
             android:textStyle="bold" />
@@ -50,24 +65,10 @@
             android:drawableTop="@drawable/favorite_icon"
             android:drawableTint="@color/icon_color"
             android:text="Favorite"
-
+            android:drawablePadding="5dp"
             android:textAllCaps="false"
             android:textColor="@color/text_color"
             android:textStyle="bold" />
 
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/musicRV"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nowPlaying"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_55sdp"
-        android:layout_marginHorizontal="@dimen/_5sdp"
-        android:name="com.example.online_music.ui.NowPlaying"
-        tools:layout="@layout/fragment_now_playing"/>
 </LinearLayout>

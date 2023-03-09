@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.online_music.R
+import com.example.online_music.databinding.FragmentMusicHomeBinding
 import com.example.online_music.databinding.FragmentNowPlayingBinding
 import com.example.online_music.ui.MusicPlayer.Companion.musicList
 import com.example.online_music.util.getBitmapFromUrl
@@ -32,7 +33,7 @@ class NowPlaying : Fragment() {
         //how to invisible the layout
         val view = inflater.inflate(R.layout.fragment_now_playing, container, false)
         binding = FragmentNowPlayingBinding.bind(view)
-        binding.root.visibility = View.INVISIBLE
+
         binding.songMusicNamePA.isSelected = true
 
 
@@ -71,9 +72,8 @@ class NowPlaying : Fragment() {
     override fun onResume() {
         super.onResume()
         if (PlayerViewModel.musicService != null){
-            binding.root.visibility = View.VISIBLE
             binding.songMusicNamePA.isSelected = true
-
+            MusicHome.binding.nowPlaying.visibility = View.VISIBLE
             val img = getBitmapFromUrl(musicList[MusicPlayer.position].imageUrl,requireContext())
             binding.songImpNP.setImageBitmap(img)
             binding.songMusicNamePA.text = musicList[MusicPlayer.position].songName

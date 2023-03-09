@@ -13,4 +13,5 @@
     <color name="text_color">#67B7D1</color>
     <color name="search_bg_color">#ADD8E6</color>
     <color name="time_color_rv">#494E65</color>
+    <color name="favouriteColor">#FF2400</color>
 </resources>
