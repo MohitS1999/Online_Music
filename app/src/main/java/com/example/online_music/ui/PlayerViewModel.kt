@@ -29,7 +29,7 @@ import kotlin.math.log
 private const val TAG = "PlayerViewModel"
 
 @HiltViewModel
-class PlayerViewModel @Inject constructor() : ViewModel() {
+class PlayerViewModel @Inject constructor() : ViewModel(),MediaPlayer.OnCompletionListener {
 
 
     companion object {
@@ -94,6 +94,7 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
             }
             musicService?.mediaPlayer?.prepareAsync()
             musicService!!.showNotification(R.drawable.pause_music_icon)
+            musicService!!.mediaPlayer!!.setOnCompletionListener(this)
            /* musicService!!.mediaPlayer!!.setOnCompletionListener {
                 Log.d(TAG, "onCompletion: ")
                 setSongPosition(true)
@@ -173,6 +174,17 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
         MusicPlayer.binding.songNamePlayer.text = MusicPlayer.musicList.get(MusicPlayer.position).songName
         MusicPlayer.binding.singerNamePlayer.text = MusicPlayer.musicList.get(MusicPlayer.position).singerName
         Log.d(TAG, "setContentLayout: finish")
+    }
+
+    override fun onCompletion(mp: MediaPlayer?) {
+        Log.d(TAG, "onCompletion: ")
+        setSongPosition(true)
+        createMediaPlayer(MusicPlayer.musicList[MusicPlayer.position].songUrl)
+        try {
+            contextMusicPlayer?.let { setContentLayout(it) }
+        } catch (e: Exception) {
+            Log.d(TAG, "onCompletion: ${e.printStackTrace()}")
+        }
     }
 
 
