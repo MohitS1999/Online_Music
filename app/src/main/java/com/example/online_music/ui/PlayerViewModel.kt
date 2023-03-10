@@ -7,9 +7,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.IBinder
 import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -128,6 +130,7 @@ class PlayerViewModel @Inject constructor() : ViewModel(),MediaPlayer.OnCompleti
     }
 
     fun pauseMusic() {
+        Log.d(TAG, "pauseMusic: ")
         musicService!!.showNotification(R.drawable.play_music_icon)
         musicService?.mediaPlayer!!.pause()
     }
@@ -148,6 +151,9 @@ class PlayerViewModel @Inject constructor() : ViewModel(),MediaPlayer.OnCompleti
                 musicService = binder.currentService()
                 createMediaPlayer(MusicPlayer.musicList[MusicPlayer.position].songUrl)
                 musicService!!.seekBarSetup()
+                musicService!!.audioManager = contextMusicPlayer!!.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                musicService!!.audioManager.requestAudioFocus(musicService,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN)
+
                 Log.d(TAG, "onServiceConnected: ${musicService.toString()}")
                 _isServiceBound.postValue(UiState.Success(true))
             }

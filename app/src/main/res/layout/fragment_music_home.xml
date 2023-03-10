@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="Shuffle"
-            android:drawableTop="@drawable/favorite_icon"
+            android:drawableTop="@drawable/favourite_bottom_icon"
             android:drawableTint="@color/icon_color"
             android:text="Favorite"
             android:drawablePadding="5dp"

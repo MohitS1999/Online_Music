@@ -126,10 +126,12 @@ class MusicHome : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: ${PlayerViewModel.musicService!!.mediaPlayer}")
-        if (!MusicPlayer.isPlaying && PlayerViewModel.musicService!!.mediaPlayer != null){
+        if (!MusicPlayer.isPlaying && PlayerViewModel.musicService != null){
+            PlayerViewModel.musicService!!.audioManager.abandonAudioFocus(PlayerViewModel.musicService)
             PlayerViewModel.musicService!!.stopForeground(true)
             PlayerViewModel.musicService!!.mediaPlayer!!.release()
             PlayerViewModel.musicService = null
+
             exitProcess(1)
         }
         Log.d(TAG, "onDestroy: ")

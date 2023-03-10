@@ -4,17 +4,17 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.MediaPlayer
-import android.os.Binder
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.navigation.NavDeepLinkBuilder
 import com.example.online_music.MyApplication
 import com.example.online_music.R
 import com.example.online_music.ui.MusicPlayer
+import com.example.online_music.ui.NowPlaying
 import com.example.online_music.ui.PlayerViewModel
 import com.example.online_music.util.UiState
 import com.example.online_music.util.formatDuration
@@ -22,11 +22,12 @@ import com.example.online_music.util.getBitmapFromUrl
 import java.io.IOException
 
 private const val TAG = "MusicService"
-class MusicService :Service() {
+class MusicService :Service(), AudioManager.OnAudioFocusChangeListener {
     private var myBinder = MyBinder()
     var mediaPlayer:MediaPlayer ?= null
     private lateinit var runnable: Runnable
     private lateinit var mediaSession:MediaSessionCompat
+    lateinit var audioManager: AudioManager
 
     override fun onBind(intent: Intent?): IBinder {
         mediaSession = MediaSessionCompat(baseContext,"My Music")
@@ -40,6 +41,16 @@ class MusicService :Service() {
     }
 
     fun showNotification(playPauseBtn:Int){
+        val bundle = Bundle()
+        bundle.putString("onNowPlayedClicked","nowplaying")
+        val pendingIntent = NavDeepLinkBuilder(baseContext)
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(R.id.musicHome)
+            .setArguments(bundle)
+            .createPendingIntent()
+
+
+
 
         val prevIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(MyApplication.PREVIOUS)
         val prevPendingIntent = PendingIntent.getBroadcast(baseContext,0,prevIntent,PendingIntent.FLAG_UPDATE_CURRENT)
@@ -69,7 +80,9 @@ class MusicService :Service() {
             .addAction(playPauseBtn,"play",playPendingIntent)
             .addAction(R.drawable.next_music_icon,"next",nextPendingIntent)
             .addAction(R.drawable.exit_icon,"exit",exitPendingIntent)
+            .setContentIntent(pendingIntent)
             .build()
+
 
 
 
@@ -133,5 +146,23 @@ class MusicService :Service() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: ")
+    }
+
+    override fun onAudioFocusChange(focusChange: Int) {
+        if (focusChange <= 0){
+            Log.d(TAG, "onAudioFocusChange: Pause Music")
+            MusicPlayer.binding.playPauseMusicBtn.setImageResource(R.drawable.play_music_icon)
+            NowPlaying.binding.playPauseBtnNP.setIconResource(R.drawable.play_pa_icon)
+            showNotification(R.drawable.play_music_icon)
+            MusicPlayer.isPlaying = false
+            mediaPlayer!!.pause()
+        }else{
+            Log.d(TAG, "onAudioFocusChange: Play Music")
+            MusicPlayer.binding.playPauseMusicBtn.setImageResource(R.drawable.pause_music_icon)
+            NowPlaying.binding.playPauseBtnNP.setIconResource(R.drawable.pause_pa_icon)
+            showNotification(R.drawable.pause_music_icon)
+            MusicPlayer.isPlaying = true
+            mediaPlayer!!.start()
+        }
     }
 }

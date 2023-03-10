@@ -52,6 +52,7 @@ class MusicPlayer : Fragment() {
         val clickOnShuffle: String = "shuffleSongs"
         val clickOnNowPlayer:String = "nowplaying"
         var isPlaying: Boolean = false
+        var isFavourite:Boolean = false
         var repeat: Boolean = false
         @SuppressLint("StaticFieldLeak")
         lateinit var binding: FragmentMusicPlayerBinding
@@ -71,6 +72,7 @@ class MusicPlayer : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.d(TAG, "onViewCreated: ")
         super.onViewCreated(view, savedInstanceState)
+
 
         if ((arguments?.getString("onSongClicked").equals(clickOnSongs)) ||
             (arguments?.getString("onShuffleClicked").equals(clickOnShuffle))) {
@@ -94,6 +96,18 @@ class MusicPlayer : Fragment() {
             binding.seekBarEnd.text = formatDuration(PlayerViewModel.musicService!!.mediaPlayer!!.duration.toLong())
             binding.seekBarPA.progress = PlayerViewModel.musicService!!.mediaPlayer!!.currentPosition
             binding.seekBarPA.max = PlayerViewModel.musicService!!.mediaPlayer!!.duration
+        }
+
+        binding.favPlayerbtn.setOnClickListener {
+            if (isFavourite){
+                Log.d(TAG, "onViewCreated: favourite btn $isFavourite")
+                binding.favPlayerbtn.setImageResource(R.drawable.favorite_empty_icon)
+                isFavourite = false
+            }else{
+                Log.d(TAG, "onViewCreated: favourite btn $isFavourite")
+                binding.favPlayerbtn.setImageResource(R.drawable.favorite_icon)
+                isFavourite = true
+            }
         }
 
 
@@ -243,12 +257,14 @@ class MusicPlayer : Fragment() {
 
 
     private fun playMusic() {
+        Log.d(TAG, "playMusic: ")
         binding.playPauseMusicBtn.setImageResource(R.drawable.pause_music_icon)
         isPlaying = true
         viewModel.playMusic()
     }
 
     private fun pauseMusic() {
+        Log.d(TAG, "pauseMusic: ")
         binding.playPauseMusicBtn.setImageResource(R.drawable.play_music_icon)
         isPlaying = false
         viewModel.pauseMusic()

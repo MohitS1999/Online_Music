@@ -46,6 +46,7 @@ class NowPlaying : Fragment() {
         binding.playPauseBtnNP.setOnClickListener{
             if (MusicPlayer.isPlaying) pauseMusic() else playMusic()
         }
+
         binding.nextBtnNP.setOnClickListener {
             setSongPosition(true)
             PlayerViewModel.musicService!!.createMediaPlayer(musicList[MusicPlayer.position].songUrl)
@@ -62,8 +63,8 @@ class NowPlaying : Fragment() {
             Log.d(TAG, "onViewCreated: click on root")
             val bundle = Bundle()
             bundle.putString("onNowPlayedClicked","nowplaying")
-            bundle.putInt("pos",MusicPlayer.position)
-            bundle.putSerializable("musicList", MusicPlayer.musicList as java.io.Serializable)
+            //bundle.putInt("pos",MusicPlayer.position)
+            //bundle.putSerializable("musicList", musicList as java.io.Serializable)
             findNavController().navigate(R.id.action_musicHome_to_musicPlayer,bundle)
         }
     }
