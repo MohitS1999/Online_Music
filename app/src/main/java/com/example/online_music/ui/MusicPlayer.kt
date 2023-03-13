@@ -32,8 +32,6 @@ import com.example.online_music.util.UiState
 import com.example.online_music.util.formatDuration
 import com.example.online_music.util.setSongPosition
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_music_player.*
-import kotlinx.android.synthetic.main.fragment_music_player.view.*
 import kotlinx.coroutines.*
 import kotlin.math.log
 import kotlin.system.exitProcess

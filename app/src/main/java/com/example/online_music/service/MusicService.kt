@@ -10,13 +10,12 @@ import android.os.*
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.navigation.NavDeepLinkBuilder
+import com.example.online_music.MainActivity
 import com.example.online_music.MyApplication
 import com.example.online_music.R
 import com.example.online_music.ui.MusicPlayer
 import com.example.online_music.ui.NowPlaying
 import com.example.online_music.ui.PlayerViewModel
-import com.example.online_music.util.UiState
 import com.example.online_music.util.formatDuration
 import com.example.online_music.util.getBitmapFromUrl
 import java.io.IOException
@@ -43,26 +42,41 @@ class MusicService :Service(), AudioManager.OnAudioFocusChangeListener {
     fun showNotification(playPauseBtn:Int){
         val bundle = Bundle()
         bundle.putString("onNowPlayedClicked","nowplaying")
-        val pendingIntent = NavDeepLinkBuilder(baseContext)
+       /* val pendingIntent = NavDeepLinkBuilder(baseContext)
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.musicHome)
             .setArguments(bundle)
-            .createPendingIntent()
+            .createTaskStackBuilder()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            pendingIntent.getPendingIntent(0,PendingIntent.FLAG_IMMUTABLE)
+        }else {
+            pendingIntent.getPendingIntent(0,PendingIntent.FLAG_CANCEL_CURRENT)
+        }*/
+        val intent = Intent(baseContext, MainActivity::class.java)
+
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
+
+        val contentIntent = PendingIntent.getActivity(this, 0, intent, flag)
 
 
 
         val prevIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(MyApplication.PREVIOUS)
-        val prevPendingIntent = PendingIntent.getBroadcast(baseContext,0,prevIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+        val prevPendingIntent = PendingIntent.getBroadcast(baseContext,0,prevIntent,flag)
 
         val playIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(MyApplication.PLAY)
-        val playPendingIntent = PendingIntent.getBroadcast(baseContext,0,playIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+        val playPendingIntent = PendingIntent.getBroadcast(baseContext,0,playIntent,flag)
 
         val nextIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(MyApplication.NEXT)
-        val nextPendingIntent = PendingIntent.getBroadcast(baseContext,0,nextIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+        val nextPendingIntent = PendingIntent.getBroadcast(baseContext,0,nextIntent,flag)
 
         val exitIntent = Intent(baseContext, NotificationReceiver::class.java).setAction(MyApplication.EXIT)
-        val exitPendingIntent = PendingIntent.getBroadcast(baseContext,0,exitIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+        val exitPendingIntent = PendingIntent.getBroadcast(baseContext,0,exitIntent,flag)
 
 
 
@@ -80,7 +94,7 @@ class MusicService :Service(), AudioManager.OnAudioFocusChangeListener {
             .addAction(playPauseBtn,"play",playPendingIntent)
             .addAction(R.drawable.next_music_icon,"next",nextPendingIntent)
             .addAction(R.drawable.exit_icon,"exit",exitPendingIntent)
-            .setContentIntent(pendingIntent)
+            .setContentIntent(contentIntent)
             .build()
 
 
